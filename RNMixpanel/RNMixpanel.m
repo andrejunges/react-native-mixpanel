@@ -27,8 +27,20 @@ Mixpanel *mixpanel = nil;
 RCT_EXPORT_MODULE(RNMixpanel)
 
 // sharedInstanceWithToken
-RCT_EXPORT_METHOD(sharedInstanceWithToken:(NSString *)apiToken) {
+RCT_EXPORT_METHOD(sharedInstanceWithToken:(NSString *)apiToken launchOptions:(NSDictionary *)launchOptions) {
     mixpanel = [Mixpanel sharedInstanceWithToken:apiToken];
+
+    if ([launchOptions objectForKey:@"minimumSessionDuration"]) {
+        NSNumber *minimumSessionDuration = launchOptions[@"minimumSessionDuration"];
+        long long int intValue = [minimumSessionDuration longLongValue];
+        mixpanel.minimumSessionDuration = intValue;
+    }
+
+    if ([launchOptions objectForKey:@"maximumSessionDuration"]) {
+        NSNumber *maximumSessionDuration = launchOptions[@"maximumSessionDuration"];
+        long long int intValue = [maximumSessionDuration longLongValue];
+        mixpanel.maximumSessionDuration = intValue;
+    }
     // React Native runs too late to listen for applicationDidBecomeActive,
     // so we expose the private method and call it explicitly here,
     // to ensure that important things like initializing the flush timer and
